@@ -1,3 +1,13 @@
 #ignore generated files from jupyter.
 #these are temporary files, and should not be committed to a git repo.
 .ipynb_checkpoints
+twitter_credentials.py
+full_tweets.csv
+full_tweets_2.csv
+full_tweets_3.csv
+place_only.csv
+place_only_2.csv
+place_only_3.csv
+text_only.csv
+text_only_2.csv
+text_only_3.csv
