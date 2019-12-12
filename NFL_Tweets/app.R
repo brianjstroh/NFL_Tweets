@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(leaflet)
 library(dplyr)
@@ -15,12 +6,16 @@ library(ggplot2)
 library(reshape2)
 
 ui <- fluidPage(
+        h1(strong("NFL Team Mentions on Twitter")),
+        h4("Author: ",em("Brian Stroh")),
+        h4("Date: ",em("December 11th, 2019")),
+        br(),
         sidebarLayout(
             sidebarPanel( sliderInput("height",
                                       "Change Map Height:",
                                       min = 500,
                                       max = 1500,
-                                      value = 1000)
+                                      value = 800)
             ),
             mainPanel(
                 tabsetPanel(
@@ -43,8 +38,33 @@ ui <- fluidPage(
                                This will likely contribute to a rejected null hypothesis."),
                              br(),
                              textOutput("test"),
-                             br()
-                    )
+                             br(),
+                             p("Conclusion:"),
+                             p("At the 5% significance level, the null hypothesis is rejected. There is significant statistical evidence to prove that the proportion
+                               of tweet mentions by NFL team are not identically distributed among tweets that share location data and tweets that do not share location."),
+                             p("The results of this analysis and the map can be used to target ads for fanwear in locations not just near each team's stadium, but also in
+                               other locations where each team's fans are. It seems that it will be relatively easy to target ads for Chargers fans and more difficult 
+                               for Cardinals and Buccaneers fans, who do not share much location data.")),
+                    tabPanel("Sources and Limitations",
+                             p("The data in this application was mostly captured and cleaned in Python before being brought into R."),
+                             p("The files used to create this data can be found here:"),
+                             tags$a(href="https://github.com/brianjstroh/ds710fall2019finalproject", "Brian's GitHub Repo (Currently Private)"),
+                             br(),
+                             br(),
+                             br(),
+                             p("The data was collected using Twitter's API through the tweePy package in Python during the time frame of December 7th through December 10th."),
+                             p("As tweet streams were collected only in this time frame, the statistical assumption of independence is violated."),
+                             p("Tweets in the time frame were influenced by current events such as the latest cheating scandal of the Patriots spying on the Bengal's sidelines."),
+                             p("Whereas one might expect the Patriots to create a lot of talk on Twitter between their stellar history, recent loss streak, power rankings, etc.,
+                               one would not expect the Bengals (who have had an abysmal season so far and a fairly small fan base) to be in the top 10 most-talked-about team
+                               on most weeks this season."),
+                             p("Retweets were not filtered out, so that could be an additional factor impacting independence of sampled data."),
+                             br(),
+                             br(),
+                             br(),
+                             p("Additionally, no sentiment analysis was performed so tweet mentions were not analyzed for the tweeter's favorite team."),
+                             p("The count of mentions simply implies that the teams are a popular topic for discussion, not that they're the fanbase's favorite teams."))
+                            
                 )
                 
             )
@@ -297,13 +317,10 @@ server <- function(input, output, session) {
                                   'Rams','Dolphins','Vikings','Patriots','Saints','Giants','Jets','Raiders','Eagles',
                                   'Steelers','49ers','Seahawks','Buccaneers','Titans','Redskins'),
                 options = layersControlOptions(collapsed = F)
-            )
+            ) %>%
+            setView(-100, 40, zoom = 4)
 
     })
-    
-    
-    
-    
 }
 
 
