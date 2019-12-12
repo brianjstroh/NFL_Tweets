@@ -11,7 +11,8 @@ library(shiny)
 library(leaflet)
 library(dplyr)
 library(data.table)
-library(sp)
+library(ggplot2)
+library(reshape2)
 
 ui <- fluidPage(
         sidebarLayout(
@@ -22,15 +23,62 @@ ui <- fluidPage(
                                       value = 1000)
             ),
             mainPanel(
-                uiOutput("map")
+                tabsetPanel(
+                    tabPanel("Map",uiOutput("map")),
+                    tabPanel("Analysis",
+                             p("Let us explore the whether or not the proportion distributions for NFL team mentions are equal 
+                               between all tweets and just tweets where users share their location."),
+                             br(),
+                             p("Null Hypothesis: The distribution of NFL team mentions for tweets where location data is available is identical to 
+                               the distribution of NFL team mentions for tweets where location data is not available."),
+                             p("Alternative Hypothesis: The distribution of NFL team mentions for tweets where location data is available is NOT identical to 
+                               the distribution of NFL team mentions for tweets where location data is not available."),
+                             br(),
+                             br(),
+                             plotOutput("plot"),
+                             br(),
+                             p("We can see from the distribution of proportions of team mentions that most teams have similar proportions of mentions
+                               between tweets with and without locations shared. The largest exception is the Chargers, which have a much larger
+                               proportion of tweets with location data than tweets without location data, relative to mentions of all other teams.
+                               This will likely contribute to a rejected null hypothesis."),
+                             br(),
+                             textOutput("test"),
+                             br()
+                    )
+                )
+                
             )
         )
 )
 
 server <- function(input, output, session) {
+    
+#----------------------------------This section is for the Analysis Tab------------------------------------
+    team_coords <- read.csv("team_coords.csv",stringsAsFactors = F)
+    all_mentions <- read.csv("nfl_team_mentions.csv", stringsAsFactors = F, col.names = c("team", "not_placed"))
+    
+    placed_mentions <- team_coords %>% group_by(team = Teams) %>% summarise(placed = n())
+    all_mentions <- all_mentions[order(all_mentions$team),]
+    
+    proportions <- data.frame(team = placed_mentions$team, 
+                              not_placed = all_mentions$not_placed/sum(all_mentions$not_placed), 
+                              placed = placed_mentions$placed/sum(placed_mentions$placed))
+    
+    for_graph <- melt(proportions, variable.name = "location", value.name = "proportions")
+    
+    output$plot <- renderPlot({ggplot(for_graph, aes(x = team, y = proportions, group = location, fill = location)) + 
+        geom_col(position = position_dodge()) + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.25)) +
+        labs(title = "Proportions of Team Mentions Among Tweets With and Without Location Shared")})
+    
+    
+    output$test <- renderPrint({chisq.test(rbind(all_mentions$not_placed, placed_mentions$placed))})
+#----------------------------------End of Analysis section----------------------------------
+    
+    
+#--------------This section is for mapping the location distribution of NFL team mentions.----------------
     coords <- reactiveValues()
     coords$data <- data.table(read.csv("team_coords.csv"))
-    
     
     mydf <- reactive({
         coords$data
@@ -41,13 +89,6 @@ server <- function(input, output, session) {
         Jaguars = makeIcon("Jaguars.png", "Jaguars.png", 20, 20)
     )
     
-    #leafIcons <- icons(
-    #    iconUrl = case_when(select(mydf(),Teams) =="Ravens" ~ "Ravens.png",
-    #                        TRUE ~ "Jaguars.png"
-    #    ),
-    #    iconWidth = 38, iconHeight = 95,
-    #    iconAnchorX = 22, iconAnchorY = 94
-    #)
     output$map = renderUI({
         leafletOutput('nfl_map', height = input$height)
     })
