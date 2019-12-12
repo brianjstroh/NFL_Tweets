@@ -52,7 +52,7 @@ ui <- fluidPage(
                              br(),
                              br(),
                              br(),
-                             p("The data was collected using Twitter's API through the tweePy package in Python during the time frame of December 7th through December 10th."),
+                             p("The data was collected using Twitter's API through the tweePy package in Python during the time frame of December 6th through December 10th."),
                              p("As tweet streams were collected only in this time frame, the statistical assumption of independence is violated."),
                              p("Tweets in the time frame were influenced by current events such as the latest cheating scandal of the Patriots spying on the Bengal's sidelines."),
                              p("Whereas one might expect the Patriots to create a lot of talk on Twitter between their stellar history, recent loss streak, power rankings, etc.,
