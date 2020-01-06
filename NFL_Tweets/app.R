@@ -48,7 +48,7 @@ ui <- fluidPage(
                     tabPanel("Sources and Limitations",
                              p("The data in this application was mostly captured and cleaned in Python before being brought into R."),
                              p("The files used to create this data can be found here:"),
-                             tags$a(href="https://github.com/brianjstroh/ds710fall2019finalproject", "Brian's GitHub Repo (Currently Private)"),
+                             tags$a(href="https://github.com/brianjstroh/NFL_Tweets", "Brian's GitHub Repo"),
                              br(),
                              br(),
                              br(),

@@ -5,8 +5,8 @@ account: bstroh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1592287
-bundleId: 2661011
+bundleId: 2710603
 url: https://bstroh.shinyapps.io/NFL_Tweets/
-when: 1576127429.73101
+when: 1578352299.69875
 asMultiple: FALSE
 asStatic: FALSE
